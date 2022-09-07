@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,5 +15,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+
+    // dump('web.php');
+
+    // abort(404); // HTML
+
+    return view('welcome'); //HTML
+    return response()->json([
+        "key" => "this is attribute"
+    ]); //JSON
+});
+
+Route::get('/student-list', function() {
+    
+    $data =  DB::select('SELECT * FROM students');
+
+    return response()->json($data);
 });
