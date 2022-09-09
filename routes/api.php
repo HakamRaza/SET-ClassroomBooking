@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\ClassroomType;
+use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,3 +35,53 @@ Route::post('classroom-type', function(Request $hehe) {
 
     // return "bdhasbdshj";
 });
+
+
+/**
+ * Return list of teachers
+ */
+Route::get('teacher', function(){
+    $data = Teacher::all();
+
+    return response()->json($data);
+});
+
+/**
+ * Add new teacher
+ */
+Route::post('teacher', function(Request $request){
+
+    Teacher::create($request->all());
+
+    $data = Teacher::all();
+
+    return response()->json($data);
+});
+
+/**
+ * Update existing teacher by his/her id
+ */
+Route::put('teacher/{id}', function($id, Request $lala){
+
+    // select the specific teacher based on id
+    $teacher = Teacher::findOrFail($id);
+
+    // update the info given in payload to that teacher
+    // $teacher->update($lala->all());
+
+    return tap($teacher)->update($lala->all());
+
+    // return updated teacher's information
+    // return $teacher;
+});
+
+/**
+ * Delete an existing teacher
+ */
+Route::delete('teacher/{id}', function($id){
+    $teacher = Teacher::findOrFail($id);
+    $teacher->delete();
+
+    return response()->json('Deleted Teacher: '. $id, 204);
+});
+
