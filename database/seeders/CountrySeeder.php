@@ -27,6 +27,7 @@ class CountrySeeder extends Seeder
         // convert array
         $data = json_decode($json, true);
 
+        // DB query
         DB::table('countries')->insert($data);
     }
 }
