@@ -3,6 +3,7 @@
 use App\Models\ClassroomType;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,6 +40,7 @@ Route::post('classroom-type', function(Request $hehe) {
 
 /**
  * Return list of teachers
+ * index()
  */
 Route::get('teacher', function(){
     $data = Teacher::all();
@@ -47,9 +49,21 @@ Route::get('teacher', function(){
 });
 
 /**
+ * Get a specific teacher from id
+ * show()
+ */
+Route::get('teacher/{id}', function($id){
+
+    return Teacher::findOrFail($id);
+});
+
+/**
  * Add new teacher
+ * store()
  */
 Route::post('teacher', function(Request $request){
+
+    // $request['secret'] = Hash::make($request->secret);
 
     Teacher::create($request->all());
 
@@ -60,6 +74,7 @@ Route::post('teacher', function(Request $request){
 
 /**
  * Update existing teacher by his/her id
+ * update()
  */
 Route::put('teacher/{id}', function($id, Request $lala){
 
@@ -77,11 +92,22 @@ Route::put('teacher/{id}', function($id, Request $lala){
 
 /**
  * Delete an existing teacher
+ * destroy()
  */
 Route::delete('teacher/{id}', function($id){
     $teacher = Teacher::findOrFail($id);
     $teacher->delete();
 
     return response()->json('Deleted Teacher: '. $id, 204);
+});
+
+Route::get('factory-teacher', function(){
+    // generate only
+    $generated = Teacher::factory()->upTheNameLol()->make();
+
+    // generate and save to DB
+    // $generated = Teacher::factory()->create();
+    
+    return $generated;
 });
 
