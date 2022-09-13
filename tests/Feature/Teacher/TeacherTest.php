@@ -6,13 +6,47 @@ use App\Http\Requests\AddTeacherRequest;
 use App\Models\ClassroomType;
 use App\Models\Teacher;
 use App\Models\User;
+use Database\Seeders\DatabaseSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class TeacherTest extends TestCase
 {
+    /*
+     * Prepare/ Initialise your test with whatever like variable, seeder, 
+    */
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        // create new teacher
+        $teacher = Teacher::factory()->create([
+            'name' => 'hallo',
+            'secret' => 'password123'
+        ]);
+        // act as that teacher
+        Sanctum::actingAs($teacher);
+        
+        // no error
+        // $this->seed(DatabaseSeeder::class);
+    }
+
+    /**
+     * Initialise before test, call once
+     */
+    // public static function setUpBeforeClass(): void
+    // {
+    //     parent::setUpBeforeClass();
+        
+    //     // error, not static method
+    //     $this->seed(DatabaseSeeder::class);
+        
+    // }
+
+
     public function checkInput($payload):bool
     {
         return Validator::make(
@@ -78,10 +112,15 @@ class TeacherTest extends TestCase
 
     public function test_can_register_teacher()
     {
-        // $teacher = Teacher::factory()->make()->toArray();
-        $teacher = $this->getTeacherData();
 
-        $response = $this->postJson('api/teacher', $teacher);
+        // $teacher = Teacher::factory()->make()->toArray();
+        // $teacher = $this->getTeacherData();
+
+        // call this secure route
+        $response = $this->postJson('api/teacher', [
+            'name' => 'testere',
+            'secret' => 'password123'
+        ]);
 
         $response
             ->assertOk();

@@ -1,11 +1,13 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherFactoryController;
 use App\Http\Controllers\TeacherResourceController;
 use App\Models\ClassroomType;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -54,7 +56,7 @@ Route::post('classroom-type', function(Request $hehe) {
 // Route::delete('teacher/{id}', [TeacherController::class, 'destroy']);
 
 Route::apiResource('teacher', TeacherResourceController::class)
-->names('absyar');
+->names('absyar')->middleware('auth:sanctum');
 // ->except(['destroy']); // blacklist, cant access
 // ->only(['destroy']); // whitelist, can access only
 
@@ -71,3 +73,19 @@ Route::apiResource('teacher', TeacherResourceController::class)
 Route::get('factory-teacher', TeacherFactoryController::class)
 ->name('john-doe');
 
+/**
+ * Auth Route
+ */
+Route::post('teacher-login', [AuthController::class, 'login']);
+Route::post('teacher-logout', [AuthController::class, 'logout']);
+
+
+Route::get('auth', function(){
+    
+    // get teacher id
+    // dd(Auth::id()); 
+    
+    // get teacher model instance
+    dd(Auth::user()->name);
+
+})->middleware('auth:sanctum');
