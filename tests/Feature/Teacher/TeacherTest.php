@@ -27,11 +27,26 @@ class TeacherTest extends TestCase
             'name' => 'hallo',
             'secret' => 'password123'
         ]);
-        // act as that teacher
+        // act as that teacher authentication
         Sanctum::actingAs($teacher);
+
+        // for authorization
+        $teacher->assignRole('Admin');
         
         // no error
         // $this->seed(DatabaseSeeder::class);
+    }
+
+    public function test_auth_route()
+    {
+        $this->getJson('api/auth')
+            ->assertStatus(200);
+    }
+
+    public function test_permission_route()
+    {
+        $this->getJson('api/permission-test')
+            ->assertStatus(200);
     }
 
     /**

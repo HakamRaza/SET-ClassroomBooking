@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AddTeacherRequest;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 /**
  * Naming supposely 'TeacherController'
@@ -32,12 +35,14 @@ class TeacherResourceController extends Controller
     public function store(AddTeacherRequest $request)
     {
         // $request['secret'] = Hash::make($request->secret);
+        $teacher = Teacher::create($request->all());
 
-        Teacher::create($request->all());
+        // assign 'Admin' role to teacher
+        $teacher->assignRole(["Admin", "Teacher", "Super Admin"]);
 
-        $data = Teacher::all();
-
-        return response()->json($data);
+        // $data = Teacher::all();
+        
+        return response()->json($teacher);
     }
 
     /**
@@ -48,7 +53,12 @@ class TeacherResourceController extends Controller
      */
     public function show($id)
     {
-        return Teacher::findOrFail($id);
+        // view own data
+        $teacher = Teacher::findOrFail($id);
+        
+        $this->authorize('view', $teacher);
+
+        return $teacher;
     }
 
     /**
@@ -68,6 +78,8 @@ class TeacherResourceController extends Controller
         
         // select the specific teacher based on id
         $teacher = Teacher::findOrFail($id);
+
+        $this->authorize('update', $teacher);
 
         // update the info given in payload to that teacher
         // $teacher->update($lala->all());

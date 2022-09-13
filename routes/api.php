@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Spatie\Permission\Models\Role;
 
 /*
 |--------------------------------------------------------------------------
@@ -86,6 +87,27 @@ Route::get('auth', function(){
     // dd(Auth::id()); 
     
     // get teacher model instance
-    dd(Auth::user()->name);
+    dd(Auth::user());
 
-})->middleware('auth:sanctum');
+    // user is login, and has role Admin or Teacher
+})->middleware(['auth:sanctum', 'role:Admin|Teacher']);
+
+
+Route::get('permission-to-role', function() {
+    // seed permission 'teacher:edit', 'teacher:delete'
+    // php artisan permission:create-permission "teacher:delete"
+    // php artisan permission:create-permission "teacher:edit"
+
+    // extract the target role
+    $role = Role::findByName('Admin');
+
+    // give permission to role
+    $role->givePermissionTo(['teacher:edit', 'teacher:delete']);
+
+    return $role;
+});
+
+Route::get('permission-test', function(){
+    
+    return 'success';
+})->middleware(['permission:teacher:edit|teacher:delete']);
