@@ -4,16 +4,21 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Hollywood;
 use Illuminate\Support\Facades\Hash;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 /**
  * Store list of teachers
  * @var string name
  * @var string secret
  */
-class Teacher extends Model
+class Teacher extends Hollywood
 {
-    use HasFactory;
+    use HasFactory,
+        HasApiTokens,
+        HasRoles;
 
     /**
      * The attributes that are mass assignable.
