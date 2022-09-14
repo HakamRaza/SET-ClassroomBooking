@@ -14,13 +14,27 @@ class User extends Authenticatable
 
     /**
      * The attributes that are mass assignable.
-     *
+     * Whitelist
      * @var array<int, string>
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+    ];
+
+    /**
+     * Blacklist
+     */
+    protected $guard = [
+        // 'password'
+    ];
+
+    /** 
+     * Append a value from attribute to model
+     */
+    protected $appends = [
+        'whatever'
     ];
 
     /**
@@ -41,4 +55,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * get....Attribute
+     */
+    public function getWhateverAttribute()
+    {
+        return ucwords($this->email);
+    }
 }
