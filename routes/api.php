@@ -1,11 +1,13 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherFactoryController;
 use App\Http\Controllers\TeacherResourceController;
 use App\Http\Middleware\IsAdminExistMiddleware;
 use App\Http\Resources\TeacherResource;
+use App\Models\Classroom;
 use App\Models\ClassroomType;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -150,3 +152,6 @@ Route::get('one-teacher', function()
 
     return response()->json(new TeacherResource($teacher));
 });
+
+Route::apiResource('classroom', ClassroomController::class)
+    ->middleware('auth:sanctum');

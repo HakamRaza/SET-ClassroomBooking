@@ -62,4 +62,12 @@ class Teacher extends Hollywood
         return strtoupper($this->name);
     }
 
+    /**
+     * Get the classrooms belong to this teacher
+     */
+    public function classrooms()
+    {
+        return $this->hasMany(Classroom::class);
+    }
+
 }
