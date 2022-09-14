@@ -60,13 +60,19 @@ class Kernel extends HttpKernel
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        // has valid signature
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
+        // limit the request
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
+
+        // verified email
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        
+
         // spatie middleware
         'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
         'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
         // 'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
-    ];
 
+        'is_admin' => \App\Http\Middleware\IsAdminExistMiddleware::class,
+    ];
+}

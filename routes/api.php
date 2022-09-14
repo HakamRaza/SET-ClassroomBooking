@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherFactoryController;
 use App\Http\Controllers\TeacherResourceController;
+use App\Http\Middleware\IsAdminExistMiddleware;
 use App\Models\ClassroomType;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -111,3 +112,23 @@ Route::get('permission-test', function(){
     
     return 'success';
 })->middleware(['permission:teacher:edit|teacher:delete']);
+
+
+/**
+ * Test middleware to check inside request has 'isAdmin' key
+ */
+Route::post('middleware-test', function(Request $request){
+
+    return "User is : " . $request->has('isAdmin');
+
+})->middleware('is_admin');
+// })->middleware(IsAdminExistMiddleware::class);
+
+// Route::group(function(){
+//     // specific route to exclude middleware
+//     Route::get('/')->withoutMiddleware(['is_admin']);
+
+//     // all other route will use 'is_admin' middleware
+//     Route::post('/');
+
+// })->middleware('is_admin');
