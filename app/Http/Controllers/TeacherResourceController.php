@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AddTeacherRequest;
+use App\Http\Resources\TeacherResource;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +24,7 @@ class TeacherResourceController extends Controller
     {
         $data = Teacher::all();
 
-        return response()->json($data);
+        return response()->json(TeacherResource::collection($data));
     }
 
     /**

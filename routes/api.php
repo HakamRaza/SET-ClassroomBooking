@@ -5,6 +5,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherFactoryController;
 use App\Http\Controllers\TeacherResourceController;
 use App\Http\Middleware\IsAdminExistMiddleware;
+use App\Http\Resources\TeacherResource;
 use App\Models\ClassroomType;
 use App\Models\Teacher;
 use Illuminate\Http\Request;
@@ -132,3 +133,20 @@ Route::post('middleware-test', function(Request $request){
 //     Route::post('/');
 
 // })->middleware('is_admin');
+
+
+Route::get('all-teachers', function()
+{
+    $teachers = Teacher::all();
+
+    return response()->json(TeacherResource::collection($teachers));
+});
+
+Route::get('one-teacher', function()
+{
+    $teacher = Teacher::first();
+    
+    $teacher['pass_data'] = "This pass data";
+
+    return response()->json(new TeacherResource($teacher));
+});
