@@ -33,4 +33,12 @@ class Classroom extends Model
         return $this->belongsTo(ClassroomType::class, 'type_id');
     }
 
+    /**
+     * Get the classroom attachment
+     */
+    public function attachment()
+    {
+        return $this->hasOne(Attachment::class);
+    }
+
 }

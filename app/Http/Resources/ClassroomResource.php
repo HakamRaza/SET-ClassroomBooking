@@ -21,7 +21,9 @@ class ClassroomResource extends JsonResource
             // access from relation 'classroomType'
             'category_name' => $this->classroomType->type,
             'date' => $this->date,
-            'time' => $this->time_start . " to " . $this->time_end
+            'time' => $this->time_start . " to " . $this->time_end,
+            'attachment' => optional($this->attachment)->uri
+            // 'attachment' => $this->attachment ? $this->attachment->uri : null
         ];
     }
 }

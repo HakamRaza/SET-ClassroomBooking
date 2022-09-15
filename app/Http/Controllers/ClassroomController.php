@@ -36,7 +36,13 @@ class ClassroomController extends Controller
     {
         // $class = Classroom::create($request->all());
         
-        $class = Auth::user()->classrooms()->create($request->all());
+        $class = Auth::user()->classrooms()->create($request->except('uri'));
+        
+        // check exist
+        if($request->has('uri')){
+            // then create attachment using class instance
+            $class->attachment()->create($request->only('uri'));
+        }
 
         return new ClassroomResource($class);
     }
@@ -67,7 +73,21 @@ class ClassroomController extends Controller
     {
         if($classroom->teacher_id == Auth::id()){
 
-            $classroom->update($request->all());
+            $classroom->update($request->except('uri'));
+            
+            // check payload has uri
+            if($request->has('uri')){
+                // update or create if not exist
+                // $classroom->attachment()->updateOrCreate(
+                //     ['classroom_id' => $classroom->id],
+                //     $request->only('uri')
+                // );
+                
+                // or like this
+                $classroom->attachment()->update(
+                    $request->only('uri')
+                );
+            }
             
             return new ClassroomResource($classroom);
         }

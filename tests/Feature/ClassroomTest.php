@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Attachment;
 use App\Models\Classroom;
 use App\Models\Teacher;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -102,6 +103,73 @@ class ClassroomTest extends TestCase
         $this->assertDatabaseMissing(Classroom::class, [
             'teacher_id' => $this->teacher->id,
             'name' => $class->name
+        ]);
+    }
+
+    public function test_teacher_can_create_classroom_with_attachment()
+    {
+        // generate classroom data
+        $class = Classroom::factory()->make();
+        $attachment = Attachment::factory()->make();
+        
+        // combine array data
+        $payload = array_merge($class->toArray(), $attachment->toArray());
+
+        // check detail classroom return with attachment if exist
+        $this   ->postJson('api/classroom', $payload)
+                ->assertJson([
+                    "data" => [
+                        'teacher_name' => $this->teacher->name,
+                        'topic' => $class->name,
+                        'attachment' => $attachment->uri
+                    ]
+                ]);
+        
+        // check uri is save inside Attachment table
+        $this->assertDatabaseCount(Attachment::class, 1);
+    }
+
+    public function test_teacher_can_create_classroom_without_attachment()
+    {
+        // generate classroom data
+        $class = Classroom::factory()->make();
+        
+        // check detail classroom return with attachment not exist
+        $this   ->postJson('api/classroom', $class->toArray())
+                ->assertJson([
+                    "data" => [
+                        'teacher_name' => $this->teacher->name,
+                        'topic' => $class->name,
+                        'attachment' => null
+                    ]
+                ]);
+        
+        // check nothing save inside Attachment table
+        $this->assertDatabaseCount(Attachment::class, 0);
+    }
+
+    public function test_teacher_can_update_existing_classroom_attachment()
+    {
+        $class = Classroom::factory()->for($this->teacher)->create();
+        $attachment = Attachment::factory()->for($class)->create();
+        $newAttachment = Attachment::factory()->make();
+
+        $this   ->putJson('api/classroom/' . $class->id, $newAttachment->toArray())
+                ->assertJson([
+                    "data" => [
+                        'teacher_name' => $this->teacher->name,
+                        'topic' => $class->name,
+                        'attachment' => $newAttachment->uri
+                    ]
+                ]);
+        $this->assertDatabaseMissing(Attachment::class, [
+            'classroom_id' => $class->id,
+            'uri' => $attachment->uri
+        ]);
+
+        $this->assertDatabaseHas(Attachment::class, [
+            'classroom_id' => $class->id,
+            'uri' => $newAttachment->uri
         ]);
     }
 }

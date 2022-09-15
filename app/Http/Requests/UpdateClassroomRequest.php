@@ -28,7 +28,8 @@ class UpdateClassroomRequest extends FormRequest
             'type_id' => 'exists:classroom_types,id',
             'date' => 'string',
             'time_start' => 'string',
-            'time_end' => 'string'
+            'time_end' => 'string',
+            'uri' => 'string'
         ];
     }
 }
