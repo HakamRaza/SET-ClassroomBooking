@@ -6,6 +6,7 @@ use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\TeacherFactoryController;
 use App\Http\Controllers\TeacherResourceController;
 use App\Http\Middleware\IsAdminExistMiddleware;
+use App\Http\Resources\ClassroomResource;
 use App\Http\Resources\TeacherResource;
 use App\Models\Classroom;
 use App\Models\ClassroomType;
@@ -155,3 +156,39 @@ Route::get('one-teacher', function()
 
 Route::apiResource('classroom', ClassroomController::class)
     ->middleware('auth:sanctum');
+
+
+/**
+ * search classroom route
+ */ 
+Route::post('classroom/search', function(Request $request){
+    $request->validate([
+        'teacher_id' => 'exists:teachers,id',
+        'type_name' => 'string',
+        'search_topic' => 'string|min:3',
+        'search_teacher_name' => 'string',
+    ]);
+
+    $collection = Classroom::query()
+                    ->when($request->teacher_id, function($q) use ($request) {
+                        $q->where('teacher_id', $request->teacher_id);
+                    })
+                    ->when($request->type_name, function($q) use ($request) {
+                        // using relation to query
+                        $q->whereHas('classroomType', function($class) use ($request) {
+                            $class->where('type', $request->type_name);
+                        });
+                    })
+                    ->when($request->search_topic, function($q) use ($request) {
+                        $q->where('name', 'like', "%$request->search_topic%");
+                    })
+                    ->when($request->search_teacher_name, function($q) use ($request) {
+                        $q->whereHas('teacher', function($q) use ($request) {
+                            $q->where('name', 'like', "%$request->search_teacher_name%");
+                        });
+                    })
+                    ->get();
+
+    return ClassroomResource::collection($collection);
+
+});

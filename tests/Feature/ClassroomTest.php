@@ -172,4 +172,63 @@ class ClassroomTest extends TestCase
             'uri' => $newAttachment->uri
         ]);
     }
+
+
+    public function test_public_can_search_class_using_teacher_id() {
+        // class belong to intended teacher we want to search
+        $classA = Classroom::factory()->for($this->teacher)->create();
+        $classB = Classroom::factory()->for($this->teacher)->create();
+
+        // classroom belong to other teacher
+        $classC = Classroom::factory()->for(Teacher::factory()->create())->create();
+
+        $this   ->postJson('api/classroom/search', [
+                    'teacher_id' => $this->teacher->id
+                ])
+                ->assertJson([
+                    "data" => [
+                        [ "topic" => $classA->name ],
+                        [ "topic" => $classB->name ]
+                    ]
+                ])
+                ->assertJsonCount(2, "data");
+    }
+
+    public function test_public_can_search_class_using_topic_and_class_type()
+    {
+        $classA = Classroom::factory()->for($this->teacher)->create(['name' => 'Math Course A', 'type_id' => 2]);
+        $classB = Classroom::factory()->for($this->teacher)->create(['name' => 'Geography', 'type_id' => 1]);
+        $classC = Classroom::factory()->for($this->teacher)->create(['name' => 'Geographic Channel', 'type_id' => 3]);
+
+        $this   ->postJson('api/classroom/search', [
+                    'type_name' => 'live',
+                    'search_topic' => 'geo'
+                ])
+                ->assertJson([
+                    "data" => [
+                        [ "topic" => $classB->name ],
+                    ]
+                ])
+                ->assertJsonCount(1, "data");
+    }
+
+    public function test_public_can_search_class_using_topic_and_teacher_name()
+    {
+        $teacher = Teacher::factory()->create(['name' => 'Lady Gaga']);
+        $classA = Classroom::factory()->for($teacher)->create(['name' => 'Data Science Beginner']);
+        $classB = Classroom::factory()->for($teacher)->create(['name' => 'Calculus']);
+        $classC = Classroom::factory()->for($teacher)->create(['name' => 'Calculus for Noob']);
+
+        $this   ->postJson('api/classroom/search', [
+                    'search_topic' => 'calculus',
+                    'search_teacher_name' => 'Gaga'
+                ])
+                ->assertJson([
+                    "data" => [
+                        [ "topic" => $classB->name ],
+                        [ "topic" => $classC->name ],
+                    ]
+                ])
+                ->assertJsonCount(2, "data");
+    }
 }
