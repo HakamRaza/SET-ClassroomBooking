@@ -70,4 +70,12 @@ class Teacher extends Hollywood
         return $this->hasMany(Classroom::class);
     }
 
+    /**
+     * Get the profile, one to one polymorphic
+     */
+    public function profile()
+    {
+        return $this->morphOne(Profile::class, 'profileable');
+    }
+
 }

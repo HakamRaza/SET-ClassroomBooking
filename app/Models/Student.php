@@ -33,4 +33,12 @@ class Student extends Model
         'password',
         'remember_token',
     ];
+
+    /**
+     * Get the profile, one to one polymorphic
+     */
+    public function profile()
+    {
+        return $this->morphOne(Profile::class, 'profileable');
+    }
 }
