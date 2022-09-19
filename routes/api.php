@@ -8,6 +8,7 @@ use App\Http\Controllers\TeacherResourceController;
 use App\Http\Middleware\IsAdminExistMiddleware;
 use App\Http\Resources\ClassroomResource;
 use App\Http\Resources\TeacherResource;
+use App\Jobs\CreateTeacherJob;
 use App\Models\Classroom;
 use App\Models\ClassroomType;
 use App\Models\Teacher;
@@ -191,4 +192,11 @@ Route::post('classroom/search', function(Request $request){
 
     return ClassroomResource::collection($collection);
 
+});
+
+Route::get('execute-job', function(){
+    // dispatch job
+    CreateTeacherJob::dispatch("North Corolina");
+
+    return 'Success';
 });
